@@ -1,0 +1,1 @@
+# wazuh-api-web-interface
