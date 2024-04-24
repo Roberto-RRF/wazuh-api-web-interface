@@ -75,6 +75,7 @@ def vulnerabilities_by_keyword(keyword, url, request_header):
         print(f"Error: {str(e)}")
         return [{"agent": "Failed to fetch data due to an error", "vulnerabilities": 0}]
     
+    
 def vulnerabilities_overview(url, request_header):
     try:
         response = requests.get(url + "/agents", headers=request_header, verify=False)
@@ -109,4 +110,47 @@ def vulnerabilities_overview(url, request_header):
     except Exception as e:
         print(f"Error: {str(e)}")
         return [{"agent": "Failed to fetch data due to an error", "vulnerabilities": 0}]
- 
+
+def agent_by_name(agent_name, url, request_header):
+    try:
+        # Obtener las vulnerabilidades relacionadas con el nombre del agente
+        vulnerabilities = vulnerabilities_by_name(agent_name, url, request_header)
+        
+        # Obtener el recuento de vulnerabilidades
+        vulnerabilities_count = len(vulnerabilities)
+        
+        # Obtener el ID del agente
+        agent_id = vulnerabilities[0].get('agent_id') if vulnerabilities else None
+        
+        # Obtener el nombre del agente
+        agent_name = vulnerabilities[0].get('agent_name') if vulnerabilities else None
+        
+        # Retornar el resultado como una lista con un solo elemento que contiene la información del agente y el recuento de vulnerabilidades
+        return [{"agent_id": agent_id, "agent_name": agent_name, "vulnerabilities_count": vulnerabilities_count}]
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return [{"error": "Failed to fetch data due to an error"}]
+
+
+def vulnerabilities_by_name(agent_name, url, request_header):
+    try:
+        response = requests.get(url + "/agents?limit=50", headers=request_header, verify=False)
+        if response.status_code == 200: 
+            agents = response.json()["data"]["affected_items"]
+            result_vulnerabilities = []
+            for agent in agents:
+                if agent['name'] == agent_name:
+                    agent_id = agent['id']
+                    agent_name = agent['name']
+
+                    vul_response = requests.get(url + f"/vulnerability/{agent_id}", headers=request_header, verify=False)
+                    if vul_response.status_code == 200 and vul_response.json().get('data'):
+                            vulnerabilities = vul_response.json()["data"]["affected_items"]
+                            for vulnerability in vulnerabilities:
+                                result_vulnerabilities.append({'agent_id': agent_id, 'agent_name':agent_name, 'vul_name':vulnerability['name'], 'cve':vulnerability['cve'], 'severity':vulnerability['severity'] })
+
+            return result_vulnerabilities
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return []
+

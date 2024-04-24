@@ -50,7 +50,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
 
   <!-- Header -->
   <header class="w3-container" style="padding-top:2vw">
-    <h5><b><i class="fa fa-dashboard"></i> Buscar un Agente </b></h5>
+    <h5><b><i class="fa fa-dashboard"></i>Agente </b></h5>
   </header>
   <div class="w3-container">
     <h1>Buscar Agente</h1>
@@ -63,27 +63,25 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
   </form>
   
 
-    <div class="w3-container">
-        <h5>Resultado de la busqueda</h5>
-        <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Vulnerabilitie</th>
-                <th>CVE</th>
-                <th>Severidad</th>
-            </tr>
-            {% for item in search_results %}
-            <tr>
-                <td>{{ item['agent_id'] }}</td>
-                <td>{{ item['agent_name'] }}</td>
-                <td>{{ item['vul_name'] }}</td>
-                <td>{{ item['cve'] }}</td>
-                <td>{{ item['severity'] }}</td>
-            </tr>
-            {% endfor %}
-        </table><br>
-      </div>
+  <div class="w3-container">
+    <h5>Resultado de la búsqueda</h5>
+    <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Vulnerabilities</th>
+        </tr>
+        {% for item in search_results %}
+        <tr>
+            <td>{{ item['agent_id'] }}</td>
+            <td>{{ item['agent_name'] }}</td>
+            <td>{{ item['vulnerabilities_count'] }}</td>
+        </tr>
+        {% endfor %}
+    </table><br>
+  </div>
+</div>
+
 </div>
   <!-- Footer -->
   <footer class="w3-container w3-padding-16 w3-light-grey">

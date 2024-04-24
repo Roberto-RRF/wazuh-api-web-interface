@@ -45,15 +45,27 @@ def common():
 def agent():
     header = _authentication.get_header()
     
-    # Obtener la palabra clave del formulario si se envió
+    # Obtener el nombre del agente del formulario si se envió
     agent_name = request.form.get('agent')
     
-    # Obtener los agentes con las vulnerabilidades relacionadas con la palabra clave
+    # Obtener los agentes con las vulnerabilidades relacionadas con el nombre del agente
     search_results = []
     if agent_name:
-        search_results = _api_calls.vulnerabilities_by_keyword(agent_name, _authentication.url, header)
+        search_results = _api_calls.agent_by_name(agent_name, _authentication.url, header)
     
-    vulnerabilities = _api_calls.get_vulnerabilities_with_agents(_authentication.url, header)
+    # Obtener un resumen de las vulnerabilidades por severidad
+    total, critical, high, medium, low = _api_calls.vulnerabilities_overview(_authentication.url, header)
+    
+    # Crear un diccionario con los recuentos de vulnerabilidades por severidad
+    vulnerabilities = {
+        "total": total,
+        "count_critical": len(critical),
+        "count_high": len(high),
+        "count_medium": len(medium),
+        "count_low": len(low)
+    }
+    
+    # Obtener el CVE seleccionado del formulario si se envió
     selected_cve = request.form.get('cve')
     if selected_cve:
         # Filtrar agentes basado en el CVE seleccionado
@@ -68,6 +80,7 @@ def agent():
         selected_cve=selected_cve,
         search_results=search_results
     )
+
 
 # =============================================
 #    --> search vulnerability by key word
