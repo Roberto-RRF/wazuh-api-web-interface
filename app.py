@@ -38,6 +38,38 @@ def common():
 
 
 # =============================================
+#    --> search vulnerability by agent
+# =============================================
+
+@app.route("/agent", methods=['GET', 'POST'])
+def agent():
+    header = _authentication.get_header()
+    
+    # Obtener la palabra clave del formulario si se envió
+    agent_name = request.form.get('agent')
+    
+    # Obtener los agentes con las vulnerabilidades relacionadas con la palabra clave
+    search_results = []
+    if agent_name:
+        search_results = _api_calls.vulnerabilities_by_keyword(agent_name, _authentication.url, header)
+    
+    vulnerabilities = _api_calls.get_vulnerabilities_with_agents(_authentication.url, header)
+    selected_cve = request.form.get('cve')
+    if selected_cve:
+        # Filtrar agentes basado en el CVE seleccionado
+        filtered_agents = {selected_cve: vulnerabilities[selected_cve]}
+    else:
+        filtered_agents = vulnerabilities
+
+    return render_template(
+        'agent.html',
+        vulnerabilities=vulnerabilities,
+        filtered_agents=filtered_agents,
+        selected_cve=selected_cve,
+        search_results=search_results
+    )
+
+# =============================================
 #    --> search vulnerability by key word
 # =============================================
 
