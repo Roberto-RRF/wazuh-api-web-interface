@@ -1,199 +1,298 @@
 <!DOCTYPE html>
 <html>
-<head>
-<title>UP Wazuh Dashboard</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
-</style>
-</head>
-<body class="w3-light-grey">
+  <head>
+    <title>UP Wazuh Dashboard</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Raleway"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <style>
+      html,
+      body,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5 {
+        font-family: 'Raleway', sans-serif;
+      }
+    </style>
+  </head>
+  <body class="w3-light-grey">
+    <!-- Top container -->
+    <div class="w3-bar w3-top w3-black w3-large" style="z-index: 4">
+      <button
+        class="w3-bar-item w3-button w3-hide-large w3-hover-none w3-hover-text-light-grey"
+        onclick="w3_open();"
+      >
+        <i class="fa fa-bars"></i> Menu
+      </button>
+      <div class="w3-bar-item w3-right">
+        <div class="w1-col s4" style="width: 5vw; height: auto">
+          <!-- Ajuste el ancho al 50% del ancho de la pantalla -->
+          <img
+            src="{{ url_for('static', filename='images/logo-up-dorado.png') }}"
+            style="width: 100%; height: auto"
+          />
+        </div>
+      </div>
+      <span class="w3-bar-item w3-right" style="line-height: 3vw"
+        >UP Wazuh Dashboard</span
+      >
+    </div>
 
-<!-- Top container -->
-<div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
-    <button class="w3-bar-item w3-button w3-hide-large w3-hover-none w3-hover-text-light-grey" onclick="w3_open();"><i class="fa fa-bars"></i>  Menu</button>
-        <div class="w3-bar-item w3-right">   
-          <div class="w1-col s4" style="width: 5vw; height: auto;" > <!-- Ajuste el ancho al 50% del ancho de la pantalla -->
-              <img src="{{ url_for('static', filename='images/logo-up-dorado.png') }}" style="width: 100%; height: auto;">
+    <!-- Sidebar/menu -->
+    <nav
+      class="w3-sidebar w3-collapse w3-white w3-animate-left"
+      style="z-index: 3; width: 300px; padding-top: 2vw"
+      id="mySidebar"
+    >
+      <br />
+      <div class="w3-container">
+        <h5>Dashboard</h5>
+      </div>
+      <div class="w3-bar-block">
+        <a
+          href="#"
+          class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black"
+          onclick="w3_close()"
+          title="close menu"
+          ><i class="fa fa-remove fa-fw"></i> Close Menu</a
+        >
+        <a href="/vulnerabilities_os" class="w3-bar-item w3-button w3-padding"
+          ><i class="fa fa-bar-chart fa-fw"></i> Vulnerabilidades by OS</a
+        >
+        <a
+          href="/vulnerabilities"
+          class="w3-bar-item w3-button w3-padding w3-blue"
+          ><i class="fa fa-eye fa-fw"></i> Vulnerabilidades Overview</a
+        >
+        <a href="/key_word" class="w3-bar-item w3-button w3-padding"
+          ><i class="fa fa-key fa-fw"></i> Buscar Palabra Clave</a
+        >
+        <a href="/agent" class="w3-bar-item w3-button w3-padding"
+          ><i class="fa fa-search fa-fw"></i> Buscar Agente</a
+        >
+        <a href="/common" class="w3-bar-item w3-button w3-padding"
+          ><i class="fa fa-exclamation-circle fa-fw"></i> Vulnerabilidades
+          Comunes</a
+        >
+        <a href="/top_10" class="w3-bar-item w3-button w3-padding"
+          ><i class="fa fa-user-times fa-fw"></i> Top 10 Agentes Vulnerables</a
+        >
+        <a href="/team" class="w3-bar-item w3-button w3-padding"
+          ><i class="fa fa-users fa-fw"></i> Team</a
+        >
+      </div>
+    </nav>
+
+    <!-- Overlay effect when opening sidebar on small screens -->
+    <div
+      class="w3-overlay w3-hide-large w3-animate-opacity"
+      onclick="w3_close()"
+      style="cursor: pointer"
+      title="close side menu"
+      id="myOverlay"
+    ></div>
+
+    <!-- !PAGE CONTENT! -->
+    <div class="w3-main" style="margin-left: 300px; margin-top: 43px">
+      <!-- Header -->
+      <header class="w3-container" style="padding-top: 2vw">
+        <h5>
+          <b><i class="fa fa-eye"></i> Vulnerabilidades Overview</b>
+        </h5>
+      </header>
+
+      <hr />
+      <div class="w3-container">
+        <h5>Resumen Vulnerabilidades</h5>
+        <p><b>Critica:</b> {{data['l_critical']}}</p>
+        <div class="w3-grey">
+          <div
+            class="w3-container w3-center w3-padding w3-black"
+            style="width:{{data['p_critical']}}%"
+          >
+            {{data['p_critical']}}%
           </div>
         </div>
-        <span class="w3-bar-item w3-right" style="line-height: 3vw;">UP Wazuh Dashboard</span>
-    </div>
 
-<!-- Sidebar/menu -->
-<nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:300px;padding-top:2vw;" id="mySidebar"><br>
-    <div class="w3-container">
-      <h5>Dashboard</h5>
-    </div>
-    <div class="w3-bar-block">
-      <a href="#" class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu"><i class="fa fa-remove fa-fw"></i>  Close Menu</a>
-      <a href="/vulnerabilities_os" class="w3-bar-item w3-button w3-padding"><i class="fa fa-bar-chart fa-fw"></i> Vulnerabilidades by OS</a>
-      <a href="/vulnerabilities" class="w3-bar-item w3-button w3-padding w3-blue"><i class="fa fa-eye fa-fw"></i> Vulnerabilidades Overview</a>
-      <a href="/key_word" class="w3-bar-item w3-button w3-padding"><i class="fa fa-key fa-fw"></i>  Buscar Palabra Clave</a>
-      <a href="/agent" class="w3-bar-item w3-button w3-padding"><i class="fa fa-search fa-fw"></i>  Buscar Agente</a>
-      <a href="/common" class="w3-bar-item w3-button w3-padding"><i class="fa fa-exclamation-circle fa-fw"></i>  Vulnerabilidades Comunes</a>
-      <a href="/top_10" class="w3-bar-item w3-button w3-padding"><i class="fa fa-user-times fa-fw"></i>  Top 10 Agentes Vulnerables</a>
-      <a href="/team" class="w3-bar-item w3-button w3-padding"><i class="fa fa-users fa-fw"></i>  Team</a>
-    </div>
-  </nav>
-  
+        <p><b>Alta:</b> {{data['l_high']}}</p>
+        <div class="w3-grey">
+          <div
+            class="w3-container w3-center w3-padding w3-red"
+            style="width:{{data['p_high']}}%"
+          >
+            {{data['p_high']}}%
+          </div>
+        </div>
 
+        <p><b>Media:</b> {{data['l_medium']}}</p>
+        <div class="w3-grey">
+          <div
+            class="w3-container w3-center w3-padding w3-orange"
+            style="width:{{data['p_medium']}}%"
+          >
+            {{data['p_medium']}}%
+          </div>
+        </div>
 
-<!-- Overlay effect when opening sidebar on small screens -->
-<div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+        <p><b>Baja:</b> {{data['l_low']}}</p>
+        <div class="w3-grey">
+          <div
+            class="w3-container w3-center w3-padding w3-green"
+            style="width:{{data['p_low']}}%"
+          >
+            {{data['p_low']}}%
+          </div>
+        </div>
+      </div>
+      <hr />
 
-<!-- !PAGE CONTENT! -->
-<div class="w3-main" style="margin-left:300px;margin-top:43px;">
-
-  <!-- Header -->
-  <header class="w3-container" style="padding-top:2vw">
-    <h5><b><i class="fa fa-eye"></i> Vulnerabilidades Overview</b></h5>
-  </header>
-
-  <hr>
-  <div class="w3-container">
-    <h5>Resumen Vulnerabilidades</h5>
-    <p><b>Critica:</b> {{data['l_critical']}}</p>
-    <div class="w3-grey">
-      <div class="w3-container w3-center w3-padding w3-black" style="width:{{data['p_critical']}}%">{{data['p_critical']}}%</div>
-    </div>
-
-    <p><b>Alta:</b> {{data['l_high']}}</p>
-    <div class="w3-grey">
-      <div class="w3-container w3-center w3-padding w3-red" style="width:{{data['p_high']}}%">{{data['p_high']}}%</div>
-    </div>
-
-    <p><b>Media:</b> {{data['l_medium']}}</p>
-    <div class="w3-grey">
-      <div class="w3-container w3-center w3-padding w3-orange" style="width:{{data['p_medium']}}%">{{data['p_medium']}}%</div>
-    </div>
-    
-    <p><b>Baja:</b> {{data['l_low']}}</p>
-    <div class="w3-grey">
-      <div class="w3-container w3-center w3-padding w3-green" style="width:{{data['p_low']}}%">{{data['p_low']}}%</div>
-    </div>
-  </div>
-  <hr>
-
-  <div class="w3-container">
-    <h5>Mas detalle: </h5>
-    <p>Por categoria limitado a 10:</p>
-  </div>
-  <div class="w3-container">
-    <h5>Critica: </h5>
-    <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
-        <tr>
+      <div class="w3-container">
+        <h5>Mas detalle:</h5>
+        <p>Por categoria limitado a 10:</p>
+      </div>
+      <div class="w3-container">
+        <h5>Critica:</h5>
+        <table
+          class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white"
+        >
+          <tr>
             <th>ID</th>
             <th>Name</th>
             <th>Vulnerabilitie</th>
             <th>CVE</th>
             <th>Severidad</th>
-        </tr>
-        {% for item in data['critical'] %}
-        <tr>
+          </tr>
+          {% for item in data['critical'] %}
+          <tr>
             <td>{{ item['agent_id'] }}</td>
             <td>{{ item['agent_name'] }}</td>
             <td>{{ item['vul_name'] }}</td>
             <td>{{ item['cve'] }}</td>
             <td>{{ item['severity'] }}</td>
-        </tr>
-        {% endfor %}
-    </table><br>
-  </div>
-  <div class="w3-container">
-    <h5>Alta: </h5>
-    <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
-        <tr>
+          </tr>
+          {% endfor %}
+        </table>
+        <br />
+      </div>
+      <div class="w3-container">
+        <h5>Alta:</h5>
+        <table
+          class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white"
+        >
+          <tr>
             <th>ID</th>
             <th>Name</th>
             <th>Vulnerabilitie</th>
             <th>CVE</th>
             <th>Severidad</th>
-        </tr>
-        {% for item in data['high'] %}
-        <tr>
+          </tr>
+          {% for item in data['high'] %}
+          <tr>
             <td>{{ item['agent_id'] }}</td>
             <td>{{ item['agent_name'] }}</td>
             <td>{{ item['vul_name'] }}</td>
             <td>{{ item['cve'] }}</td>
             <td>{{ item['severity'] }}</td>
-        </tr>
-        {% endfor %}
-    </table><br>
-  </div>
-  <div class="w3-container">
-    <h5>Media: </h5>
-    <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
-        <tr>
+          </tr>
+          {% endfor %}
+        </table>
+        <br />
+      </div>
+      <div class="w3-container">
+        <h5>Media:</h5>
+        <table
+          class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white"
+        >
+          <tr>
             <th>ID</th>
             <th>Name</th>
             <th>Vulnerabilitie</th>
             <th>CVE</th>
             <th>Severidad</th>
-        </tr>
-        {% for item in data['medium'] %}
-        <tr>
+          </tr>
+          {% for item in data['medium'] %}
+          <tr>
             <td>{{ item['agent_id'] }}</td>
             <td>{{ item['agent_name'] }}</td>
             <td>{{ item['vul_name'] }}</td>
             <td>{{ item['cve'] }}</td>
             <td>{{ item['severity'] }}</td>
-        </tr>
-        {% endfor %}
-    </table><br>
-  </div>
-  <div class="w3-container">
-    <h5>Low: </h5>
-    <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
-        <tr>
+          </tr>
+          {% endfor %}
+        </table>
+        <br />
+      </div>
+      <div class="w3-container">
+        <h5>Low:</h5>
+        <table
+          class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white"
+        >
+          <tr>
             <th>ID</th>
             <th>Name</th>
             <th>Vulnerabilitie</th>
             <th>CVE</th>
             <th>Severidad</th>
-        </tr>
-        {% for item in data['low'] %}
-        <tr>
+          </tr>
+          {% for item in data['low'] %}
+          <tr>
             <td>{{ item['agent_id'] }}</td>
             <td>{{ item['agent_name'] }}</td>
             <td>{{ item['vul_name'] }}</td>
             <td>{{ item['cve'] }}</td>
             <td>{{ item['severity'] }}</td>
-        </tr>
-        {% endfor %}
-    </table><br>
-  </div>
+          </tr>
+          {% endfor %}
+        </table>
+        <br />
+      </div>
+    </div>
 
-</div>
+    <script>
+      // Get the Sidebar
+      var mySidebar = document.getElementById('mySidebar');
 
-<script>
-// Get the Sidebar
-var mySidebar = document.getElementById("mySidebar");
+      // Get the DIV with overlay effect
+      var overlayBg = document.getElementById('myOverlay');
 
-// Get the DIV with overlay effect
-var overlayBg = document.getElementById("myOverlay");
+      // Toggle between showing and hiding the sidebar, and add overlay effect
+      function w3_open() {
+        if (mySidebar.style.display === 'block') {
+          mySidebar.style.display = 'none';
+          overlayBg.style.display = 'none';
+        } else {
+          mySidebar.style.display = 'block';
+          overlayBg.style.display = 'block';
+        }
+      }
 
-// Toggle between showing and hiding the sidebar, and add overlay effect
-function w3_open() {
-  if (mySidebar.style.display === 'block') {
-    mySidebar.style.display = 'none';
-    overlayBg.style.display = "none";
-  } else {
-    mySidebar.style.display = 'block';
-    overlayBg.style.display = "block";
-  }
-}
-
-// Close the sidebar with the close button
-function w3_close() {
-  mySidebar.style.display = "none";
-  overlayBg.style.display = "none";
-}
-</script>
-
-</body>
+      // Close the sidebar with the close button
+      function w3_close() {
+        mySidebar.style.display = 'none';
+        overlayBg.style.display = 'none';
+      }
+      const sr = ScrollReveal({
+        origin: 'top',
+        distance: '80px',
+        duration: 2000,
+        reset: true,
+      });
+      sr.reveal('.w3-bar', { delay: 200 });
+      sr.reveal('#mySidebar', { delay: 300, origin: 'left' });
+      sr.reveal('.w3-container', { delay: 400 });
+      sr.reveal('h5', { interval: 200 });
+      sr.reveal('.w3-row-padding', { delay: 500 });
+    </script>
+  </body>
 </html>
