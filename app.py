@@ -8,13 +8,25 @@ app = Flask(__name__)
 @app.route("/")
 def home():
     return render_template(
-        "index.html"
+        "team.html"
     )
+
+@app.route("/team")
+def team():
+    return render_template(
+        "team.html"
+    )
+
+@app.route("/vulnerabilities_os")
+def vulnerabilities_os():
+    header = _authentication.get_header()
+    url = _authentication.url
+    os_vulnerability_data = _api_calls.vulnerability_severity_by_os(url, header)
+    return render_template('vulnerabilities_os.html', data=os_vulnerability_data)
 
 @app.route("/top_10")
 def top_10():
     header = _authentication.get_header()
-    print(header)
     top_10 = _api_calls.top_n_agents(10,_authentication.url,header)
     return render_template('top_10.html', top_10=top_10)
 

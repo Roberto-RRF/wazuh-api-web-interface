@@ -67,7 +67,6 @@ def vulnerabilities_by_keyword(keyword, url, request_header):
                         vulnerabilities = vul_response.json()["data"]["affected_items"]
                         for vulnerability in vulnerabilities:
                             if keyword.lower() in vulnerability['name'].lower():
-                                print(vulnerability)
                                 result_vulnerabilities.append({'agent_id': agent_id, 'agent_name':agent_name, 'vul_name':vulnerability['name'], 'cve':vulnerability['cve'], 'severity':vulnerability['severity'] })
 
             return result_vulnerabilities
@@ -153,4 +152,25 @@ def vulnerabilities_by_name(agent_name, url, request_header):
     except Exception as e:
         print(f"Error: {str(e)}")
         return []
+    
+def vulnerability_severity_by_os(url, request_header):
+    os_vulnerability_data = {}
+    response = requests.get(url + "/agents", headers=request_header, verify=False)
+    if response.status_code == 200:
+        agents = response.json()["data"]["affected_items"]
+        for agent in agents:
+            try:
+              agent_id = agent['id']
+              os_name = agent['os']['name']
+              vul_response = requests.get(url + f"/vulnerability/{agent_id}", headers=request_header, verify=False)
+              if vul_response.status_code == 200 and vul_response.json().get('data'):
+                  vulnerabilities = vul_response.json()["data"]["affected_items"]
+                  for vulnerability in vulnerabilities:
+                      severity = vulnerability['severity']
+                      if os_name not in os_vulnerability_data:
+                          os_vulnerability_data[os_name] = {'Critical': 0, 'High': 0, 'Medium': 0, 'Low': 0}
+                      os_vulnerability_data[os_name][severity] += 1
+            except Exception as inner_e:
+              print(f"Error processing agent {agent_id}: {str(inner_e)}")
+    return os_vulnerability_data
 
