@@ -10,12 +10,9 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 # Configuración de la conexión a la API
 protocol = 'https'
 host = '54.149.137.67'
-# host = "172.25.180.72"
 port = 55000
 user = 'wazuh'
 password = 'ePdVeStfbVuujM2eGG5*WQ.1vNLvz675'
-# user = "wazuh"
-# password = "wazuh"
 login_endpoint = 'security/user/authenticate'
 
 # Proceso de registro con la información básica
