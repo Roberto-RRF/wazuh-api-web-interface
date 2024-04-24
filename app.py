@@ -1,7 +1,7 @@
 from flask import Flask, render_template
 import sys
-sys.path.append('src')
-from . import _api_calls
+sys.path.append('functions')
+from functions import _api_calls
 
 app = Flask(__name__)
 
