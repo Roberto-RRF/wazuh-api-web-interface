@@ -29,6 +29,26 @@ def top_n_agents(n, url, request_header):
     except Exception as e:
         print(f"Error: {str(e)}")
         return [{"agent": "Failed to fetch data due to an error", "vulnerabilities": 0}]
+    
+def get_vulnerabilities_with_agents(url,request_header):
+    result = {}
+    response_agents = requests.get(url + "/agents?limit=20", headers=request_header, verify=False)
+    agents = json.loads(response_agents.text)["data"]["affected_items"]
+    for agent in agents:
+        agent_id = agent["id"]
+        agent_name = agent['name']
+        response_vul = requests.get(url + f"/vulnerability/{agent_id}/summary/cve", headers=request_header, verify=False)
+        if response_vul.status_code == 200 and response_vul.json().get('data'):
+            vulnerabilities_cve = json.loads(response_vul.text)["data"]["cve"]
+            for cve in vulnerabilities_cve.keys():
+                if cve not in result:
+                    result[cve] = []
+                agent_info = {
+                    'id': agent_id,
+                    'name': agent_name,
+                }
+                result[cve].append(agent_info)
+    return result
 
 def vulnerabilities_by_keyword(keyword, url, request_header):
     try:

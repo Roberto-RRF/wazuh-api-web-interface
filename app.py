@@ -18,11 +18,24 @@ def top_10():
     top_10 = _api_calls.top_n_agents(10,_authentication.url,header)
     return render_template('top_10.html', top_10=top_10)
 
-@app.route("/common")
+@app.route("/common", methods=['GET', 'POST'])
 def common():
+    header = _authentication.get_header()
+    vulnerabilities = _api_calls.get_vulnerabilities_with_agents(_authentication.url,header)
+    selected_cve = request.form.get('cve')
+    if selected_cve:
+        # Filtrar agentes basado en el CVE seleccionado
+        filtered_agents = {selected_cve: vulnerabilities[selected_cve]}
+    else:
+        filtered_agents = vulnerabilities
+
     return render_template(
-        "common.html"
-    )
+        'common.html',
+        vulnerabilities=vulnerabilities,
+        filtered_agents=filtered_agents,
+        selected_cve=selected_cve
+        )
+
 
 # =============================================
 #    --> search vulnerability by key word
