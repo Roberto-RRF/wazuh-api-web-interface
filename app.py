@@ -24,11 +24,13 @@ def common():
         "common.html"
     )
 
+# =============================================
+#    --> search vulnerability by key word
+# =============================================
+
 @app.route("/key_word")
 def key_word():
-
-
-    return render_template('key_words.html')
+    return render_template('key_word.html')
 
 @app.route('/key_word', methods=['POST'])
 def render_something():
@@ -37,7 +39,31 @@ def render_something():
     # Perform search with key word
     header = _authentication.get_header()
     vulnerability_by_key_word = _api_calls.vulnerabilities_by_keyword(key_word,_authentication.url,header)
-    return render_template('key_words.html', vulnerability_by_key_word=vulnerability_by_key_word)
+    return render_template('key_word.html', vulnerability_by_key_word=vulnerability_by_key_word)
+
+# =============================================
+#    --> vulnerabilidades
+# =============================================
+
+@app.route("/vulnerabilities")
+def vulnerabilities():
+    header = _authentication.get_header()
+    total, critical, high, medium, low = _api_calls.vulnerabilities_overview(_authentication.url, header)
+    data = {
+        'l_critical': len(critical),
+        'l_high': len(high),
+        'l_medium': len(medium),
+        'l_low': len(low),    
+        'p_critical': round(len(critical)*100/total,2),
+        'p_high': round(len(high)*100/total,2),
+        'p_medium': round(len(medium)*100/total,2),
+        'p_low': round(len(low)*100/total,2),       
+        'critical':critical[:10],
+        'high':high[:10],
+        'medium':medium[:10],
+        'low':low[:10]
+    }
+    return render_template('vulnerabilities.html', data=data)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
