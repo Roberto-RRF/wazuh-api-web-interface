@@ -1,7 +1,7 @@
 from flask import Flask, render_template
 import sys
 sys.path.append('functions')
-from functions import _api_calls
+from functions import _api_calls , _authentication
 
 app = Flask(__name__)
 
@@ -13,17 +13,9 @@ def home():
 
 @app.route("/top_10")
 def top_10():
-    countries = [
-        ('United States', '65%'),
-        ('UK', '15.7%'),
-        ('Russia', '5.8%'),
-        ('Spain', '2.1%'),
-        ('India', '1.9%'),
-        ('France', '1.5%')
-    ]
-    header=_api_calls.get_header()
-    print(header)
-    return render_template('top_10.html', countries=countries)
+    header = _authentication.get_header()
+    top_10 = _api_calls.top_n_agents(10,_authentication.url,header)
+    return render_template('top_10.html', top_10=top_10)
 
 @app.route("/common")
 def common():
