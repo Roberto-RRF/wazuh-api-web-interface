@@ -58,13 +58,19 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
     <h5>Agents</h5>
     <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
         <tr>
-            <th>Agent</th>
+            <th>ID</th>
+            <th>Name</th>
             <th>Vulnerabilities</th>
+            <th>OS Name</th>
+            <th>Status</th>
         </tr>
         {% for item in top_10 %}
         <tr>
-            <td>{{ item['agent'] }}</td>
+            <td>{{ item['id'] }}</td>
+            <td>{{ item['name'] }}</td>
             <td>{{ item['vulnerabilities'] }}</td>
+            <td>{{ item['os_name'] }}</td>
+            <td>{{ item['status'] }}</td>
         </tr>
         {% endfor %}
     </table><br>

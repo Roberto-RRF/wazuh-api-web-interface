@@ -14,6 +14,7 @@ def home():
 @app.route("/top_10")
 def top_10():
     header = _authentication.get_header()
+    print(header)
     top_10 = _api_calls.top_n_agents(10,_authentication.url,header)
     return render_template('top_10.html', top_10=top_10)
 
