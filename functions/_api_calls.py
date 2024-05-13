@@ -201,3 +201,28 @@ def get_all_rules(url, request_header):
     except Exception as e:
         print(f"Error: {str(e)}")
         return {"error": "Failed to fetch data due to an error"}
+
+
+def restart_agent(url, request_header, agent_id):
+    try:
+        # Construir la URL para obtener todas las reglas del servidor de Wazuh
+        rules_endpoint = f"{url}/agents/{agent_id}/restart"
+
+        # Realizar la solicitud GET a la API de Wazuh para obtener todas las reglas
+        response = requests.put(rules_endpoint, headers=request_header, verify=False)
+
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return {"error": "Failed to fetch data due to an error"}
+    
+def update_agent(url, request_header):
+    try:
+        # Construir la URL para obtener todas las reglas del servidor de Wazuh
+        rules_endpoint = f"{url}/agents/upgrade"
+
+        # Realizar la solicitud GET a la API de Wazuh para obtener todas las reglas
+        response = requests.put(rules_endpoint, headers=request_header, verify=False)
+
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return {"error": "Failed to fetch data due to an error"}

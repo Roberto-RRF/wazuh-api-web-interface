@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 import sys
 import os
 from werkzeug.utils import secure_filename
@@ -112,6 +112,21 @@ def agent():
         'agent.html',
         search_results=search_results
     )
+
+@app.route("/restart-agente", methods=['POST'])
+def borrarAgente():
+    agent_id = request.form['agent_id']
+    header = _authentication.get_header()
+    if agent_id:
+            agent_info = _api_calls.restart_agent(_authentication.url, header, agent_id)
+    return redirect(url_for('agent'))
+
+@app.route("/update-agente", methods=['POST'])
+def updateAgente():
+    header = _authentication.get_header()
+    agent_info = _api_calls.update_agent(_authentication.url, header)
+    return redirect(url_for('agent'))
+
 
 # =============================================
 #    --> search vulnerability by key word

@@ -72,10 +72,14 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
       <label for="agent">Agente:</label>
       <input type="text" id="agent" name="agent" class="w3-input w3-border" placeholder="Ingrese el nombre del agente...">
       <button type="submit" class="w3-button w3-blue btn">Buscar Agente</button>
-      <button type="submit" class="w3-button w3-blue btn">Agregar Agente</button>
-      <button type="submit" class="w3-button w3-red btn">Borrar Agente</button>
-  </form>
-  
+    </form>
+    <form action="/restart-agente" method="post">
+      <input type="text" name="agent_id" id="agent_id"  placeholder="Enter a value">
+      <button type="submit" class="w3-button w3-yellow btn">Reiniciar Agente</button>
+    </form>    
+    <form action="/update-agente" method="post">
+      <button type="submit" class="w3-button w3-green btn">Actualizar todos los agentes</button>
+    </form>
 
   <div class="w3-container">
     <h5>Resultado de la búsqueda</h5>
