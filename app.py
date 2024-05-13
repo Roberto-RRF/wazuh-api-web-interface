@@ -1,15 +1,48 @@
 from flask import Flask, render_template, request
 import sys
+import os
+from werkzeug.utils import secure_filename
 sys.path.append('functions')
-from functions import _api_calls , _authentication
+from functions import _api_calls , _authentication, _logs_recommendations
 
 app = Flask(__name__)
 
 @app.route("/")
 def home():
+
     return render_template(
         "team.html"
     )
+
+@app.route('/analyze_logs', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return render_template('analyze_logs.html', message="No file part")
+        file = request.files['file']
+        if file.filename == '':
+            return render_template('analyze_logs.html', message="No selected file")
+        if file and _logs_recommendations.allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file_path = os.path.join("logs", filename)
+            file.save(file_path)
+            result = _logs_recommendations.process_file(file_path)
+            if isinstance(result, str):
+                return render_template('analyze_logs.html', message=f"Error: {result}")
+            clusteres_data=_logs_recommendations.clusteres_data(result["clusters_keywords"], result["clusters_samples"])
+            analysis = _logs_recommendations.openai_call(clusteres_data)
+            return render_template(
+                'analyze_logs.html',
+                optimal_clusters=result["optimal_clusters"],
+                elbow_plot_path=result["elbow_plot_path"],
+                cluster_plot_path=result["cluster_plot_path"],
+                analysis=analysis,
+                clusteres_data=clusteres_data,
+            )
+        else:
+            return render_template('analyze_logs.html', message="Invalid file type")
+    return render_template('analyze_logs.html')
+
 
 @app.route("/team")
 def team():
