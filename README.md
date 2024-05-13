@@ -26,6 +26,8 @@ python app.py
 
 5. Open a web browser and access the dashboard at:
 
+http://localhost:8000
+
 ## Development Team
 - Luis Guillen
 - Roberto Requejo

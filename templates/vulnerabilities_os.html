@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/scrollreveal"></script>
     <style>
         html, body, h1, h2, h3, h4, h5 {font-family: "Raleway", sans-serif}
         .chart-container {
@@ -101,9 +102,9 @@
         </script>
     </div>
 
-<footer class="w3-container w3-padding-16 w3-light-grey">
-    <h5>Footer</h5>
-</footer>
+    <footer class="w3-container w3-padding-16 w3-light-grey">
+        <h5>Footer</h5>
+    </footer>
 
 <!-- End page content -->
 </div>
@@ -131,6 +132,16 @@ function w3_close() {
     mySidebar.style.display = "none";
     overlayBg.style.display = "none";
 }
+ScrollReveal().reveal('.w3-container, footer', {
+  origin: 'left',
+  distance: '100px',
+  duration: 1500,
+  delay: 300,
+  opacity: 0,
+  scale: 1,
+  easing: 'ease-in-out',
+  reset: false
+});
 </script>
 
 </body>
