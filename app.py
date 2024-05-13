@@ -90,42 +90,28 @@ def common():
 def agent():
     header = _authentication.get_header()
     
-    # Obtener el nombre del agente del formulario si se envió
-    agent_name = request.form.get('agent')
-    
-    # Obtener los agentes con las vulnerabilidades relacionadas con el nombre del agente
+    # Inicializamos una lista para almacenar los resultados de la búsqueda
     search_results = []
-    if agent_name:
-        search_results = _api_calls.agent_by_name(agent_name, _authentication.url, header)
     
-    # Obtener un resumen de las vulnerabilidades por severidad
-    total, critical, high, medium, low = _api_calls.vulnerabilities_overview(_authentication.url, header)
+    if request.method == 'POST':
+        # Obtener el nombre del agente del formulario si se envió
+        agent_name = request.form.get('agent')
+        
+        # Obtener los detalles del agente por su nombre
+        if agent_name:
+            agent_info = _api_calls.agent_by_name(agent_name, _authentication.url, header)
+            
+            # Verificar si se obtuvo la información del agente correctamente
+            if 'error' not in agent_info:
+                search_results.append(agent_info)
+        else:
+            search_results = []
     
-    # Crear un diccionario con los recuentos de vulnerabilidades por severidad
-    vulnerabilities = {
-        "total": total,
-        "count_critical": len(critical),
-        "count_high": len(high),
-        "count_medium": len(medium),
-        "count_low": len(low)
-    }
-    
-    # Obtener el CVE seleccionado del formulario si se envió
-    selected_cve = request.form.get('cve')
-    if selected_cve:
-        # Filtrar agentes basado en el CVE seleccionado
-        filtered_agents = {selected_cve: vulnerabilities[selected_cve]}
-    else:
-        filtered_agents = vulnerabilities
-
+    # Renderizar la plantilla HTML con la información obtenida
     return render_template(
         'agent.html',
-        vulnerabilities=vulnerabilities,
-        filtered_agents=filtered_agents,
-        selected_cve=selected_cve,
         search_results=search_results
     )
-
 
 # =============================================
 #    --> search vulnerability by key word
@@ -167,6 +153,8 @@ def vulnerabilities():
         'low':low[:10]
     }
     return render_template('vulnerabilities.html', data=data)
+
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)

@@ -65,45 +65,25 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
 
   <!-- Header -->
   <header class="w3-container" style="padding-top:2vw">
-    <h5><b><i class="fa fa-search"></i>  Buscar Agente</b></h5>
+    <h5><b><i class="fa fa-search"></i>  Reglas del servidor </b></h5>
   </header>
-  <div class="w3-container">
-    <form action="/agent" method="post">
-      <label for="agent">Agente:</label>
-      <input type="text" id="agent" name="agent" class="w3-input w3-border" placeholder="Ingrese el nombre del agente...">
-      <button type="submit" class="w3-button w3-blue btn">Buscar Agente</button>
-      <button type="submit" class="w3-button w3-blue btn">Agregar Agente</button>
-      <button type="submit" class="w3-button w3-red btn">Borrar Agente</button>
-  </form>
   
 
   <div class="w3-container">
-    <h5>Resultado de la búsqueda</h5>
-    <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
-      <tr>
-          <th>ID</th>
-          <th>Nombre</th>
-          <th>Estado</th>
-          <th>Sistema Operativo</th>
-      </tr>
-      {% for item in search_results %}
-      <tr>
-          <td>{{ item['agent_id'] }}</td>
-          <td>{{ item['agent_name'] }}</td>
-          <td>{{ item['agent_status'] }}</td>
-          <td>{{ item['agent_operating_system'] }}</td>
-      </tr>
-      {% endfor %}
-  </table><br>
-  
+    <h5>Reglas del servidor de Wazuh</h5>
+    <ul id="ruleList">
+        <!-- Reglas serán generadas aquí por JavaScript -->
+    </ul>
   </div>
 </div>
+
 
 </div>
   <!-- Footer -->
   <footer class="w3-container w3-padding-16 w3-light-grey">
   </footer>
 </div>
+
 
 </body>
 </html>

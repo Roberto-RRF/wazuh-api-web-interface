@@ -110,25 +110,31 @@ def vulnerabilities_overview(url, request_header):
         print(f"Error: {str(e)}")
         return [{"agent": "Failed to fetch data due to an error", "vulnerabilities": 0}]
 
+
 def agent_by_name(agent_name, url, request_header):
     try:
-        # Obtener las vulnerabilidades relacionadas con el nombre del agente
-        vulnerabilities = vulnerabilities_by_name(agent_name, url, request_header)
+        # Construir la URL para obtener detalles del agente por su nombre
+        agent_details_endpoint = f"{url}/agents?search={agent_name}&limit=1"
         
-        # Obtener el recuento de vulnerabilidades
-        vulnerabilities_count = len(vulnerabilities)
+        # Realizar la solicitud GET a la API de Wazuh para obtener los detalles del agente
+        response = requests.get(agent_details_endpoint, headers=request_header, verify=False)
         
-        # Obtener el ID del agente
-        agent_id = vulnerabilities[0].get('agent_id') if vulnerabilities else None
-        
-        # Obtener el nombre del agente
-        agent_name = vulnerabilities[0].get('agent_name') if vulnerabilities else None
-        
-        # Retornar el resultado como una lista con un solo elemento que contiene la información del agente y el recuento de vulnerabilidades
-        return [{"agent_id": agent_id, "agent_name": agent_name, "vulnerabilities_count": vulnerabilities_count}]
+        if response.status_code == 200:
+            # Obtener los detalles del agente de la respuesta JSON
+            agent_details = response.json()["data"]["affected_items"][0]
+            agent_id = agent_details.get('id')
+            agent_name = agent_details.get('name')
+            agent_status = agent_details.get('status')
+            agent_OperatingSystem = agent_details.get('operating system')
+            
+            # Retornar el resultado como un diccionario con la información del agente
+            return {"agent_id": agent_id, "agent_name": agent_name, "agent_status": agent_status, "agent_OperatingSystem": agent_OperatingSystem}
+        else:
+            # Si la solicitud no es exitosa, devolver un mensaje de error
+            return {"error": f"Failed to fetch agent details. Status code: {response.status_code}"}
     except Exception as e:
         print(f"Error: {str(e)}")
-        return [{"error": "Failed to fetch data due to an error"}]
+        return {"error": "Failed to fetch data due to an error"}
 
 
 def vulnerabilities_by_name(agent_name, url, request_header):
@@ -174,3 +180,24 @@ def vulnerability_severity_by_os(url, request_header):
               print(f"Error processing agent {agent_id}: {str(inner_e)}")
     return os_vulnerability_data
 
+
+def get_all_rules(url, request_header):
+    try:
+        # Construir la URL para obtener todas las reglas del servidor de Wazuh
+        rules_endpoint = f"{url}/rules"
+
+        # Realizar la solicitud GET a la API de Wazuh para obtener todas las reglas
+        response = requests.get(rules_endpoint, headers=request_header, verify=False)
+
+        if response.status_code == 200:
+            # Obtener las reglas de la respuesta JSON
+            rules_data = response.json()["data"]
+
+            # Retornar el resultado como una lista de reglas
+            return rules_data
+        else:
+            # Si la solicitud no es exitosa, devolver un mensaje de error
+            return {"error": f"Failed to fetch rules. Status code: {response.status_code}"}
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return {"error": "Failed to fetch data due to an error"}
