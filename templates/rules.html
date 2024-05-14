@@ -52,6 +52,8 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
     <a href="/agent" class="w3-bar-item w3-button w3-padding w3-blue"><i class="fa fa-search fa-fw"></i>  Buscar Agente</a>
     <a href="/common" class="w3-bar-item w3-button w3-padding"><i class="fa fa-exclamation-circle fa-fw"></i>  Vulnerabilidades Comunes</a>
     <a href="/top_10" class="w3-bar-item w3-button w3-padding"><i class="fa fa-user-times fa-fw"></i>  Top 10 Agentes Vulnerables</a>
+    <a href="/rules" class="w3-bar-item w3-button w3-padding"><i class="fa fa-file fa-fw"></i>  Reglas</a>
+    <a href="/decoder" class="w3-bar-item w3-button w3-padding"><i class="fa fa-file fa-fw"></i>  Decoder</a>
     <a href="/team" class="w3-bar-item w3-button w3-padding"><i class="fa fa-users fa-fw"></i>  Team</a>
   </div>
 </nav>
@@ -62,28 +64,60 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
 
 <!-- !PAGE CONTENT! -->
 <div class="w3-main" style="margin-left:300px;margin-top:43px;">
-
   <!-- Header -->
   <header class="w3-container" style="padding-top:2vw">
-    <h5><b><i class="fa fa-search"></i>  Reglas del servidor </b></h5>
+      <h5><b><i class="fa fa-search"></i>  Reglas</b></h5>
   </header>
-  
 
   <div class="w3-container">
-    <h5>Reglas del servidor de Wazuh</h5>
-    <ul id="ruleList">
-        <!-- Reglas serán generadas aquí por JavaScript -->
+      <form action="/rules" method="POST">
+          <label for="ID">ID:</label><br>
+          <input type="text" id="ID" name="ID" required><br>
+
+          <label for="category">Category:</label><br>
+          <input type="text" id="category" name="category" required><br>
+
+          <label for="level">Level:</label><br>
+          <input type="text" id="level" name="level" required><br>
+
+          <label for="name">Name:</label><br>
+          <input type="text" id="name" name="name" required><br>
+
+          <label for="group">Group:</label><br>
+          <input type="text" id="group" name="group" required><br>
+
+          <label for="Description">Description:</label><br>
+          <input type="text" id="Description" name="Description" required><br>
+
+          <input type="submit" value="Agregar regla">
+      </form>
+
+      {% if success %}
+      <div class="w3-panel w3-green">
+          <p>¡La regla se ha cargado con éxito!</p>
+      </div>
+    {% endif %}
+
+    <h2>Reglas existentes:</h2>
+    <ul>
+        {% for rule in added_rules %}
+            <li>ID: {{ rule.ID }}, Category: {{ rule.category }}, Level: {{ rule.level }}, Name: {{ rule.name }}, Group: {{ rule.group }}, Description: {{ rule.Description }}</li>
+        {% endfor %}
     </ul>
-  </div>
 </div>
 
 
-</div>
-  <!-- Footer -->
-  <footer class="w3-container w3-padding-16 w3-light-grey">
-  </footer>
-</div>
-
+<script>
+  function w3_open() {
+    document.getElementById("mySidebar").style.display = "block";
+    document.getElementById("myOverlay").style.display = "block";
+  }
+   
+  function w3_close() {
+    document.getElementById("mySidebar").style.display = "none";
+    document.getElementById("myOverlay").style.display = "none";
+  }
+</script>
 
 </body>
 </html>

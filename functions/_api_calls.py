@@ -1,6 +1,10 @@
+from imaplib import _Authenticator
 import json
+from flask import redirect, request, url_for
 import requests
 from operator import itemgetter 
+import csv
+from functions import _authentication
 
 def top_n_agents(n, url, request_header):
     try:
@@ -181,26 +185,42 @@ def vulnerability_severity_by_os(url, request_header):
     return os_vulnerability_data
 
 
-def get_all_rules(url, request_header):
-    try:
-        # Construir la URL para obtener todas las reglas del servidor de Wazuh
-        rules_endpoint = f"{url}/rules"
+def add_rule(ID, category, level, name, group, description):
+    # Crear el objeto de regla con los datos proporcionados
+    new_rule = {
+        'ID': ID,
+        'category': category,
+        'level': level,
+        'name': name,
+        'group': group,
+        'Description': description
+    }
 
-        # Realizar la solicitud GET a la API de Wazuh para obtener todas las reglas
-        response = requests.get(rules_endpoint, headers=request_header, verify=False)
+    added_rules = []
+    
+    # Agregar la nueva regla a la lista de reglas agregadas
+    added_rules.append(new_rule)
 
-        if response.status_code == 200:
-            # Obtener las reglas de la respuesta JSON
-            rules_data = response.json()["data"]
+    # Devolver la lista de reglas agregadas actualizada
+    return added_rules
 
-            # Retornar el resultado como una lista de reglas
-            return rules_data
-        else:
-            # Si la solicitud no es exitosa, devolver un mensaje de error
-            return {"error": f"Failed to fetch rules. Status code: {response.status_code}"}
-    except Exception as e:
-        print(f"Error: {str(e)}")
-        return {"error": "Failed to fetch data due to an error"}
+def add_decoder(rule_id, decoder_name, regex, type, description):
+    # Crear el objeto del decoder con los datos proporcionados
+    new_decoder = {
+        'rule_id': rule_id,
+        'decoder_name': decoder_name,
+        'regex': regex,
+        'type': type,
+        'description': description
+    }
+
+    added_decoders = []
+
+    # Agregar el nuevo decoder a la lista de decoders agregados
+    added_decoders.append(new_decoder)
+
+    # Devolver la lista de decoders agregados actualizada
+    return added_decoders
 
 
 def restart_agent(url, request_header, agent_id):
@@ -226,3 +246,14 @@ def update_agent(url, request_header):
     except Exception as e:
         print(f"Error: {str(e)}")
         return {"error": "Failed to fetch data due to an error"}
+    
+def read_csv():
+    rules = []
+    try:
+        with open('rules.csv', mode='r', encoding='utf-8') as file:
+            csv_reader = csv.DictReader(file)
+            for row in csv_reader:
+                rules.append(row)
+    except UnicodeDecodeError as e:
+        print(f"Error decoding file: {e}")
+    return rules

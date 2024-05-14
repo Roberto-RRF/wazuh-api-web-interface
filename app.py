@@ -1,9 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for
 import sys
 import os
+import requests
 from werkzeug.utils import secure_filename
 sys.path.append('functions')
 from functions import _api_calls , _authentication, _logs_recommendations
+import csv
 
 app = Flask(__name__)
 
@@ -169,7 +171,44 @@ def vulnerabilities():
     }
     return render_template('vulnerabilities.html', data=data)
 
+@app.route('/rules', methods=['POST'])
+def add_rule_route():
+    ID = request.form['ID']
+    category = request.form['category']
+    level = request.form['level']
+    name = request.form['name']
+    group = request.form['group']
+    description = request.form['Description']
 
+    # Llamar a la función add_rule con los datos del formulario y la lista added_rules
+    return _api_calls.add_rule(ID, category, level, name, group, description)
+
+
+@app.route('/decoder', methods=['POST'])
+def add_decoder_route():
+    rule_id = request.form['ID']
+    decoder_name = request.form['name']
+    regex = request.form['regex']
+    type = request.form['type']
+    description = request.form['description']
+
+    # Llamar a la función add_decoder con los datos del formulario
+    return _api_calls.add_decoder(rule_id, decoder_name, regex, type, description)
+
+@app.route('/decoder', methods=['GET'])
+def get_decoder():
+    # Aquí manejas la lógica para mostrar las reglas existentes
+    # Puedes mantener la lógica actual de tu función rules() aquí
+    decoder = []  # Lógica para obtener las reglas existentes
+    return render_template('decoder.html', decoder=decoder)
+
+
+@app.route('/rules', methods=['GET'])
+def get_rules():
+    # Aquí manejas la lógica para mostrar las reglas existentes
+    # Puedes mantener la lógica actual de tu función rules() aquí
+    rules = []  # Lógica para obtener las reglas existentes
+    return render_template('rules.html', rules=rules)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
